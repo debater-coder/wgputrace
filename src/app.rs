@@ -270,7 +270,17 @@ impl App {
 
     #[allow(unused_variables)]
     pub fn input(&mut self, event: &WindowEvent) -> bool {
-        false
+        match event {
+            WindowEvent::MouseInput { state, button, .. } => {
+                if *button == winit::event::MouseButton::Left
+                    && *state == winit::event::ElementState::Pressed
+                {
+                    println!("Left mouse button pressed");
+                }
+                true
+            }
+            _ => false,
+        }
     }
 
     pub fn update(&mut self) {}

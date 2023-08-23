@@ -19,15 +19,15 @@ pub async fn run() {
         .unwrap();
 
     // State::new uses async code, so we're going to wait for it to finish
-    let mut state = App::new(window).await;
+    let mut app = App::new(window).await;
 
     event_loop.run(move |event, _, control_flow| {
         match event {
             Event::WindowEvent {
                 ref event,
                 window_id,
-            } if window_id == state.window().id() => {
-                if !state.input(event) {
+            } if window_id == app.window().id() => {
+                if !app.input(event) {
                     match event {
                         WindowEvent::CloseRequested
                         | WindowEvent::KeyboardInput {
@@ -40,23 +40,23 @@ pub async fn run() {
                             ..
                         } => *control_flow = ControlFlow::Exit,
                         WindowEvent::Resized(physical_size) => {
-                            state.resize(*physical_size);
+                            app.resize(*physical_size);
                         }
                         WindowEvent::ScaleFactorChanged { new_inner_size, .. } => {
                             // new_inner_size is &&mut so w have to dereference it twice
-                            state.resize(**new_inner_size);
+                            app.resize(**new_inner_size);
                         }
                         _ => {}
                     }
                 }
             }
-            Event::RedrawRequested(window_id) if window_id == state.window().id() => {
-                state.update();
-                match state.render() {
+            Event::RedrawRequested(window_id) if window_id == app.window().id() => {
+                app.update();
+                match app.render() {
                     Ok(_) => {}
                     // Reconfigure the surface if it's lost or outdated
                     Err(wgpu::SurfaceError::Lost | wgpu::SurfaceError::Outdated) => {
-                        state.resize(state.size)
+                        app.resize(app.size)
                     }
                     // The system is out of memory, we should probably quit
                     Err(wgpu::SurfaceError::OutOfMemory) => *control_flow = ControlFlow::Exit,
@@ -67,7 +67,7 @@ pub async fn run() {
             Event::RedrawEventsCleared => {
                 // RedrawRequested will only trigger once, unless we manually
                 // request it.
-                state.window().request_redraw();
+                app.window().request_redraw();
             }
             _ => {}
         }
