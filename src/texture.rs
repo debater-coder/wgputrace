@@ -18,6 +18,16 @@ impl Texture {
         Self::from_image(device, queue, &img, Some(label))
     }
 
+    pub fn from_color(
+        device: &wgpu::Device,
+        queue: &wgpu::Queue,
+        color: [u8; 4],
+        label: &str,
+    ) -> Self {
+        let img = image::RgbaImage::from_pixel(1, 1, image::Rgba(color)).into();
+        Self::from_image(device, queue, &img, Some(label)).unwrap()
+    }
+
     pub fn from_image(
         device: &wgpu::Device,
         queue: &wgpu::Queue,
